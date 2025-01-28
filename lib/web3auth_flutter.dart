@@ -181,6 +181,26 @@ class Web3AuthFlutter {
     }
   }
 
+  static Future<bool> manageMFA({LoginParams? loginParams}) async {
+    try {
+      bool isManageMFA = false;
+      if (loginParams == null) {
+        isManageMFA = await _channel.invokeMethod('manageMFA', jsonEncode({}));
+        return isManageMFA;
+      } else {
+        Map<String, dynamic> loginParamsJson = loginParams.toJson();
+        loginParamsJson.removeWhere((key, value) => value == null);
+        isManageMFA = await _channel.invokeMethod(
+          'manageMFA',
+          jsonEncode(loginParamsJson),
+        );
+      }
+      return isManageMFA;
+    } on PlatformException catch (e) {
+      throw _handlePlatformException(e);
+    }
+  }
+
   static Future<SignResponse> request(
     ChainConfig chainConfig,
     String method,
